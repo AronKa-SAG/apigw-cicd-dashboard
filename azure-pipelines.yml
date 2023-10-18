@@ -11,9 +11,9 @@ resources:
   - repo: self
 
 variables:
-  tag: '$(Build.SourceBranchName)'
+  tag: 'dashboard-$(Build.SourceBranchName)'
   repoServiceConnection: 'akaDockerRegistryServiceConnection'
-  imageName: 'sagtestclient/aron-docker:dashboard-1.0'
+  imageName: 'sagtestclient/aron-docker'
 
 stages:
   - stage: Build
