@@ -27,6 +27,7 @@ stages:
         - task: Docker@2
           displayName: Build image
           inputs:
+            repository: $(imageName)
             command: build
             dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
             tags: |
