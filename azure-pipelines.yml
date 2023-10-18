@@ -3,27 +3,42 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-  - main
+  tags:
+    include:
+      - '*.*'
 
 resources:
   - repo: self
 
 variables:
-  tag: '$(Build.BuildId)'
+  tag: '$(Build.SourceBranchName)'
+  repoServiceConnection: 'akaDockerRegistryServiceConnection'
+  imageName: 'sagtestclient/aron-docker:dashboard-1.0'
 
 stages:
-- stage: Build
-  displayName: Build image
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-    - task: Docker@2
-      displayName: Build an image
-      inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-        tags: |
-          $(tag)
+  - stage: Build
+    displayName: Build image
+    jobs:
+    - job: BuildAndPublish
+      displayName: Build and Publish
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+        - task: Docker@2
+          displayName: Build image
+          inputs:
+            command: build
+            dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+            tags: |
+              $(tag)
+              $(Build.BuildNumber)
+        - task: Docker@2
+          displayName: Push image to repo
+          condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+          inputs:
+            containerRegistry: $(repoServiceConnection)
+            repository: $(imageName)
+            command: push
+            tags: |
+              $(tag)
+
