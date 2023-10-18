@@ -1,0 +1,16 @@
+{
+    "types": [
+      "api"
+    ],
+    "scope": [
+      {
+        "attributeName": "id",
+        "keyword": ""
+      }
+    ],
+    "includeOptions" :
+    {
+      "includeApplications": true,
+      "includeDocuments": true
+    }
+}

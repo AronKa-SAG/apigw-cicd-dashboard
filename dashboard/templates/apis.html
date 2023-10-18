@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}API Gateway Deployed APIs{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h1>API Deployments</h1>
+  <table class="table table-bordered mt-4">
+    <colgroup>
+      <col style="width: 30%;">
+      <col>
+      <col>
+    </colgroup>
+    <thead>
+      <tr>
+        {% for item in header_list %}
+        <th>{{ item }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for api_tuple in api_list %}
+      <tr>
+        <td>
+          <a href="{{url_for('api_modal', api_id=api_tuple[0][0])}}" data-toggle="modal" data-target="#modalResult">{{ api_tuple[0][1] }}</a>
+        </td>
+        {% for item in api_tuple[1:] %}
+        <td>
+          {% if not item and (loop.index + 1 < api_tuple|length) and api_tuple[loop.index + 1] %}
+            <span class="badge badge-danger">Not Deployed</span>
+          {% elif item %}
+            <span class="badge badge-success" data-toggle="tooltip" data-placement="bottom" title="{{ item }}">Deployed</span>
+          {% else %}
+            <span class="badge badge-secondary">Not Deployed</span>
+          {% endif %}
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="modal" id="modalResult" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+      </div>
+  </div>
+</div>
+{% endblock %}

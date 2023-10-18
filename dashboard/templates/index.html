@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}API Gateway Dashboard{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h1>Project Overview</h1>
+  <table class="table table-bordered mt-4">
+    <colgroup>
+      <col style="width: 30%;">
+      <col>
+      <col>
+    </colgroup>
+    <thead>
+      <tr>
+        {% for item in header_list %}
+        <th>{{ item }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for project_tuple in project_list %}
+      <tr>
+        <td>
+          <a href="{{url_for('project_modal', project_name=project_tuple[0])}}" data-toggle="modal" data-target="#modalResult">{{ project_tuple[0] }}</a>
+        </td>
+        {% for item in project_tuple[2:] %}
+        <td>
+          {% if not item and (loop.index + 1 < project_tuple|length) and project_tuple[loop.index + 1] %}
+            <span class="badge badge-danger">Not Deployed</span>
+          {% elif item %}
+            <span class="badge badge-success">Deployed</span>
+          {% else %}
+            <span class="badge badge-secondary">Not Deployed</span>
+          {% endif %}
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="modal" id="modalResult" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+      </div>
+  </div>
+{% endblock %}
