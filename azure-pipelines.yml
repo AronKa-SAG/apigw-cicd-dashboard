@@ -20,7 +20,7 @@ variables:
   k8sNamespace: 'aka-dashboard'
   azureSubscriptionEndpoint: 'aka-resource-manager-service-connection'
   azureResourceGroup: 'apigw-dashboard'
-  kubernetesCluster: 'dashboard-aka-dashboard'
+  kubernetesCluster: 'dashboard'
 
 
 stages:
