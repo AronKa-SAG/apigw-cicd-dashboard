@@ -22,6 +22,7 @@ variables:
   azureResourceGroup: 'apigw-dashboard'
   kubernetesCluster: 'dashboard'
   imagePullSecret: 'aron-docker-registry'
+  k8sServiceConnection: 'dashboard-aka-dashboard'
 
 stages:
   - stage: Build
@@ -68,7 +69,7 @@ stages:
                     secretName: $(imagePullSecret)
                     namespace: $(k8sNamespace)
                     dockerRegistryEndpoint: $(repoServiceConnection)
-                    kubernetesServiceConnection: 'aka-resource-manager-service-connection'
+                    kubernetesServiceConnection: $(k8sServiceConnection)
                 # TODO: login to kubernetes cluster -> Kubernetes@1
                 # TODO: update/create image pull secret -> Kubernetes@1
                 # TODO: kubernetes apply manifest.yaml
