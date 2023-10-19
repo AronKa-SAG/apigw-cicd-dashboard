@@ -17,11 +17,11 @@ spec:
         app: dashboard
         version: v1
     spec:
+      imagePullSecret: aron-docker-registry
       containers:
         - name: dashboard
           image: sagtestclient/aron-docker:dashboard-1.0
           imagePullPolicy: Always
-          imagePullSecret: aron-docker-registry
 ---
 apiVersion: v1
 kind: Service
