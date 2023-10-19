@@ -59,7 +59,7 @@ stages:
     jobs:
       - deployment: Deploy
         displayName: Deploy job
-        environment: 'myenv.aksnamespace' #customize with your environment
+        environment: 'AronKaSAGapigwcicddashboard' #customize with your environment
         strategy:
           runOnce:
             deploy:
