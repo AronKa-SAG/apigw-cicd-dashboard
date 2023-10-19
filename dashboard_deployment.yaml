@@ -36,6 +36,6 @@ spec:
   selector:
     app: dashboard
   ports:
-  - port: 5555
+  - port: 80
     targetPort: 8080
     name: http
