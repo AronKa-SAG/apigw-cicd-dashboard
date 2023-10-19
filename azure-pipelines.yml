@@ -7,6 +7,9 @@ trigger:
     include:
       - '*.*'
 
+pool:
+  vmImage: ubuntu-latest
+
 resources:
   - repo: self
 
@@ -14,6 +17,11 @@ variables:
   tag: 'dashboard-$(Build.SourceBranchName)'
   repoServiceConnection: 'akaDockerRegistryServiceConnection'
   imageName: 'sagtestclient/aron-docker'
+  k8sNamespace: 'aka-dashboard'
+  azureSubscriptionEndpoint: 'aka-resource-manager-service-connection'
+  azureResourceGroup: 'apigw-dashboard'
+  kubernetesCluster: 'dashboard-aka-dashboard'
+
 
 stages:
   - stage: Build
@@ -21,8 +29,6 @@ stages:
     jobs:
     - job: BuildAndPublish
       displayName: Build and Publish
-      pool:
-        vmImage: ubuntu-latest
       steps:
         - task: Docker@2
           displayName: Build image
@@ -42,4 +48,44 @@ stages:
             command: push
             tags: |
               $(tag)
-
+        - task: PublishPipelineArtifact@1
+          inputs:
+            artifactName: 'manifests'
+            path: 'manifests'
+  
+  - stage: Deploy
+    displayName: Deploy stage
+    dependsOn: Build
+    jobs:
+      - deployment: Deploy
+        displayName: Deploy job
+        environment: 'myenv.aksnamespace' #customize with your environment
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifactName: 'manifests'
+                    downloadPath: '$(System.ArtifactsDirectory)/manifests'
+                - task: KubernetesManifest@0
+                  displayName: Create imagePullSecret
+                  inputs:
+                    action: createSecret
+                    secretName: $(imagePullSecret)
+                    namespace: $(k8sNamespace)
+                    dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+                # TODO: login to kubernetes cluster -> Kubernetes@1
+                # TODO: update/create image pull secret -> Kubernetes@1
+                # TODO: kubernetes apply manifest.yaml
+                - task: Kubernetes@1
+                  displayName: kubectl apply using configFile
+                  inputs:
+                    connectionType: Azure Resource Manager
+                    azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+                    azureResourceGroup: $(azureResourceGroup)
+                    kubernetesCluster: $(kubernetesCluster)
+                    namespace: $(k8sNamespace)
+                    command: apply
+                    useConfigurationFile: true
+                    configuration: dashboard_deployment.yaml

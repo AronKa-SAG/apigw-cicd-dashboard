@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard
+  labels:
+    app: dashboard
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dashboard
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: dashboard
+        version: v1
+    spec:
+      containers:
+        - name: dashboard
+          image: sagtestclient/aron-docker:dashboard-1.0
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: http-dashboard
+  labels:
+    app: dashboard
+    service: http-dashboard
+spec:
+  type: LoadBalancer
+  selector:
+    app: dashboard
+  ports:
+  - port: 5555
+    targetPort: 8080
+    name: http
