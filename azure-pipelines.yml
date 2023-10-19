@@ -74,7 +74,7 @@ stages:
                     action: createSecret
                     secretName: $(imagePullSecret)
                     namespace: $(k8sNamespace)
-                    dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+                    dockerRegistryEndpoint: $(repoServiceConnection)
                 # TODO: login to kubernetes cluster -> Kubernetes@1
                 # TODO: update/create image pull secret -> Kubernetes@1
                 # TODO: kubernetes apply manifest.yaml
