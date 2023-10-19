@@ -80,4 +80,4 @@ stages:
                     namespace: $(k8sNamespace)
                     command: apply
                     useConfigurationFile: true
-                    configuration: dashboard_deployment.yaml
+                    configuration: '$(Build.SourcesDirectory)/dashboard_deployment.yaml'
