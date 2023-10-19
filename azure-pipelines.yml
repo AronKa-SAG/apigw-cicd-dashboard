@@ -60,6 +60,7 @@ stages:
           runOnce:
             deploy:
               steps:
+                - checkout: repo
                 # - task: KubernetesManifest@0
                 #   displayName: Create imagePullSecret
                 #   inputs:
