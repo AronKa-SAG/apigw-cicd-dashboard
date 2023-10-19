@@ -48,10 +48,6 @@ stages:
             command: push
             tags: |
               $(tag)
-        - task: PublishPipelineArtifact@1
-          inputs:
-            artifactName: 'manifests'
-            path: 'manifests'
   
   - stage: Deploy
     displayName: Deploy stage
@@ -64,17 +60,13 @@ stages:
           runOnce:
             deploy:
               steps:
-                - task: DownloadPipelineArtifact@2
-                  inputs:
-                    artifactName: 'manifests'
-                    downloadPath: '$(System.ArtifactsDirectory)/manifests'
-                - task: KubernetesManifest@0
-                  displayName: Create imagePullSecret
-                  inputs:
-                    action: createSecret
-                    secretName: $(imagePullSecret)
-                    namespace: $(k8sNamespace)
-                    dockerRegistryEndpoint: $(repoServiceConnection)
+                # - task: KubernetesManifest@0
+                #   displayName: Create imagePullSecret
+                #   inputs:
+                #     action: createSecret
+                #     secretName: $(imagePullSecret)
+                #     namespace: $(k8sNamespace)
+                #     dockerRegistryEndpoint: $(repoServiceConnection)
                 # TODO: login to kubernetes cluster -> Kubernetes@1
                 # TODO: update/create image pull secret -> Kubernetes@1
                 # TODO: kubernetes apply manifest.yaml
