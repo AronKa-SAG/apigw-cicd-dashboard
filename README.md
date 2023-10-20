@@ -18,7 +18,7 @@ docker image push sagtestclient/aron-docker:dashboard-1.0
 az aks start --name dashboard --resource-group apigw-dashboard
 az aks stop --name dashboard --resource-group apigw-dashboard
 
-az aks show --name dashboard --resource-group apigw-dashboard
+az aks show --name dashboard --resource-group apigw-dashboard | ConvertFrom-Json | Select-Object powerState | ConvertTo-Json
 ```
 
 # use ADO to build and deploy image
