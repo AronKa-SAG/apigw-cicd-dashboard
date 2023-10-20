@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import sys
 import yaml
+import git
 from dashboard.dashboard_assets.ApiProject import ApiProject
 from dashboard.dashboard_assets.DashboardApi import DashboardApi
 from utilities.assets.Asset import Asset
@@ -14,9 +15,8 @@ asset_type_mapping = {
     "Application": "applications",
     "Alias": "aliases"
 }
-use_ssl = True
-username = "testuser"
-userpw = "Manage123!"
+
+config_path = f"{Path().absolute()}\\dashboard\\configuration\\dashboard_config.yaml"
 
 class ApigwData:
     """Dataclass containing project, api, app and alias information for each stage.
@@ -32,7 +32,8 @@ class ApigwData:
     
     
     def __init__(self) -> None:
-        
+        self.load_configuration(Path(config_path))
+        self.__work_dir: str = self.clone_git_repo(Path().absolute()/"data-repo")
         # self.apigw_connection = ApigwUtil(hostname, port, ssl_connection, agw_user, agw_password)
         self.stages_config_dict = self.__get_stage_configs()
         self.stages = [DashboardStage(stage_name, self.asset_list) for stage_name in self.stages_config_dict.keys()]
@@ -58,6 +59,33 @@ class ApigwData:
         #                 demo-two-versions-two-aliases: [('fba9e6b8-02c1-412e-8b9e-c75d82ed836c', 'TwoVersions_TwoAliases[2.0]'), ('b437f84e-0f23-4f75-9ace-3da85c3ae73b', 'TwoVersions_TwoAliases[1.0]')]]
         self.__set_project_stages()
     
+    def load_configuration(self, config_path: Path) -> None:
+        if not config_path.is_file:
+            raise FileNotFoundError(f"Config file {config_path.absolute()} could not be found")
+        
+        with config_path.open("r") as file:
+            config = yaml.safe_load(file)
+        
+        self.__use_ssl = config.get("apigw", None).get("use_ssl", True)
+        self.__username = config.get("apigw", None).get("username", "Administrator")
+        self.__userpw = config.get("apigw", None).get("userpw", "manage")
+        self.__github_user = config.get("git", None).get("user", "Not Set!")
+        self.__github_access_token = config.get("git", None).get("accessToken", "Not Set!")
+        self.__repo_url = config.get("git", None).get("repoLink", "Not Set!")
+        return
+    
+    def clone_git_repo(self, dest_folder: str):
+        """
+            dest_folder(str): full path /opt/repo
+            returns repository working directory
+        """
+        # url_string = f"https://{self.__github_user}:{self.__github_access_token}@{self.__repo_url}"
+        if Path(dest_folder).exists():
+            print(f"folder exists: {dest_folder}")
+            return dest_folder
+        my_repo = git.Repo.clone_from(self.__repo_url, dest_folder)
+        return my_repo.working_dir
+
     def __set_project_stages(self):
         # print(self.stages, file=sys.stdout)
         for project in self.projects_list:
@@ -67,7 +95,8 @@ class ApigwData:
     def __get_stage_configs(self) -> dict:
         # env configs: configuration\*_environment.yaml
         env_config_dict = { }
-        config_path: Path = Path("../configuration")
+        config_path: Path = Path(f"{self.__work_dir}/configuration")
+        print(config_path.absolute(), file=sys.stdout)
         config_glob = list(config_path.glob(f"*_environment.yaml"))
         # print(f"found configs: {config_glob}", file=sys.stdout)
         for config_file in config_glob:
@@ -82,7 +111,8 @@ class ApigwData:
     
     def __get_projects_from_repo(self) -> list[ApiProject]:
         projects_list = []
-        asset_path: Path = Path("../apis")
+        asset_path: Path = Path(f"{self.__work_dir}/apis")
+        print(asset_path.absolute(), file=sys.stdout)
         project_glob = list(asset_path.glob(f"demo-*"))
         # print(f"found projects: {project_glob}", file=sys.stdout)
         for project in project_glob:
@@ -145,7 +175,7 @@ class ApigwData:
         hostname = self.stages_config_dict.get(stage, {})["hostname"]
         port = self.stages_config_dict.get(stage, {})["port"]
         try:
-            apigw_connection = ApigwUtil(hostname, port, use_ssl, username, userpw)
+            apigw_connection = ApigwUtil(hostname, port, self.__use_ssl, self.__username, self.__userpw)
             asset_list = apigw_connection.get_assets(asset_type, api_details=False)
         except RuntimeError:
             print(f"Couldn't connect to stage {stage}. Setting asset_list empty.", file=sys.stdout)
