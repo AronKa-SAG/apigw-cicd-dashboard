@@ -84,6 +84,7 @@ class ApigwData:
             return dest_folder
         # subprocess.run(["git config", "--global", f"user.name {self.__github_user}"]) 
         # subprocess.run(["git config", "--global", f"user.password {self.__github_access_token}"])
+        print(url_string, file=sys.stdout)
         my_repo = git.Repo.clone_from(url_string, dest_folder)
         return my_repo.working_dir
 
