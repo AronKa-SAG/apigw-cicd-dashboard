@@ -1,7 +1,7 @@
 git:
   repoLink: 'github.softwareag.com/PS/pswm-inno-api-management-cicd.git'
   user: 'y508854%40softwareag.com'
-  accessToken: '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'
+  accessToken: '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'
 
 apigw:
   use_ssl: True
