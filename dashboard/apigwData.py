@@ -16,7 +16,7 @@ asset_type_mapping = {
     "Alias": "aliases"
 }
 
-config_path = f"{Path().absolute()}\\dashboard\\configuration\\dashboard_config.yaml"
+config_path = f"{Path().absolute()}/dashboard/configuration/dashboard_config.yaml"
 
 class ApigwData:
     """Dataclass containing project, api, app and alias information for each stage.
@@ -116,7 +116,7 @@ class ApigwData:
         project_glob = list(asset_path.glob(f"demo-*"))
         # print(f"found projects: {project_glob}", file=sys.stdout)
         for project in project_glob:
-            project_name = str(project).rsplit("\\", 1)[1]
+            project_name = str(project).rsplit("/", 1)[1]
             new_project = ApiProject(project_name)
             export_report = project / "assets/ExportReport.json"
             with export_report.open() as file:
