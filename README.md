@@ -15,8 +15,10 @@ docker image push sagtestclient/aron-docker:dashboard-1.0
 
 # start and stop aks cluster
 ```
-Start-AzAksCluster -Name dashboard -ResourceGroupName $resourcegroupname -SubscriptionId $subscriptionid
-Stop-AzAksCluster  -Name dashboard -ResourceGroupName $resourcegroupname -SubscriptionId $subscriptionid
+az aks start --name dashboard --resource-group apigw-dashboard
+az aks stop --name dashboard --resource-group apigw-dashboard
+
+az aks show --name dashboard --resource-group apigw-dashboard
 ```
 
 # use ADO to build and deploy image
