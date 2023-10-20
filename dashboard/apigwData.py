@@ -1,4 +1,4 @@
-import copy
+import os
 import json
 from pathlib import Path
 import sys
@@ -83,6 +83,8 @@ class ApigwData:
         if Path(dest_folder).exists():
             print(f"folder exists: {dest_folder}")
             return dest_folder
+        os.environ['GIT_USERNAME'] = self.__github_user
+        os.environ['GIT_PASSWORD'] = self.__github_access_token
         my_repo = git.Repo.clone_from(self.__repo_url, dest_folder)
         return my_repo.working_dir
 
