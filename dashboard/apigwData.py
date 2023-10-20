@@ -1,4 +1,3 @@
-import os
 import json
 from pathlib import Path
 import sys
@@ -79,13 +78,13 @@ class ApigwData:
             dest_folder(str): full path /opt/repo
             returns repository working directory
         """
-        # url_string = f"https://{self.__github_user}:{self.__github_access_token}@{self.__repo_url}"
+        url_string = f"https://{self.__github_user}:{self.__github_access_token}@{self.__repo_url}"
         if Path(dest_folder).exists():
             print(f"folder exists: {dest_folder}")
             return dest_folder
-        os.environ['GIT_USERNAME'] = self.__github_user
-        os.environ['GIT_PASSWORD'] = self.__github_access_token
-        my_repo = git.Repo.clone_from(self.__repo_url, dest_folder)
+        # subprocess.run(["git config", "--global", f"user.name {self.__github_user}"]) 
+        # subprocess.run(["git config", "--global", f"user.password {self.__github_access_token}"])
+        my_repo = git.Repo.clone_from(url_string, dest_folder)
         return my_repo.working_dir
 
     def __set_project_stages(self):
