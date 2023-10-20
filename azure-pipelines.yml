@@ -70,9 +70,12 @@ stages:
                     namespace: $(k8sNamespace)
                     dockerRegistryEndpoint: $(repoServiceConnection)
                     kubernetesServiceConnection: $(k8sServiceConnection)
-                # TODO: login to kubernetes cluster -> Kubernetes@1
-                # TODO: update/create image pull secret -> Kubernetes@1
-                # TODO: kubernetes apply manifest.yaml
+                - task: Bash@3
+                  displayName: insert tag into dashboard yaml
+                  inputs:
+                    targetType: filePath
+                    filePath: '$(Build.SourcesDirectory)/insert_tag.bash'
+                    arguments: '$(Build.SourcesDirectory)/dashboard_deployment.yaml $(tag)'
                 - task: Kubernetes@1
                   displayName: kubectl apply using configFile
                   inputs:
@@ -83,4 +86,4 @@ stages:
                     namespace: $(k8sNamespace)
                     command: apply
                     useConfigurationFile: true
-                    configuration: '$(Build.SourcesDirectory)/dashboard_deployment.yaml'
+                    configuration: '$(Build.SourcesDirectory)/dashboard_deployment_modified.yaml'
