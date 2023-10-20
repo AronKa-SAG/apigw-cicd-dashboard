@@ -21,7 +21,7 @@ spec:
         - name: aron-docker-registry
       containers:
         - name: dashboard
-          image: sagtestclient/aron-docker:dashboard-@TAG@
+          image: sagtestclient/aron-docker:@TAG@
           imagePullPolicy: Always
 ---
 apiVersion: v1
