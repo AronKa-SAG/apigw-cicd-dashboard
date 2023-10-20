@@ -7,7 +7,8 @@ RUN set -e; \
 	apk add --no-cache \
 		gcc \
 		libc-dev \
-		linux-headers ;
+		linux-headers \
+		git ;
 
 # Frequently changing part
 COPY . /opt/dashboard-app
