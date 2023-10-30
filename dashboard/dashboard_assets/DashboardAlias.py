@@ -19,8 +19,12 @@ class DashboardAlias():
         self.gw_alias = gateway_alias
         return
     
+    def add_linked_api(self, api_name: str) -> None:
+        self.linked_apis.append(api_name)
+        return
+        
     def get_linked_apis(self) -> list:
-        """Returns the linked api's ids value."""
+        """Returns the linked api's names value."""
         return self.linked_apis
 
     def __repr__(self) -> str:

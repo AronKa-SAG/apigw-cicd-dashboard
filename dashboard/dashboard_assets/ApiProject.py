@@ -1,3 +1,4 @@
+import re
 from dashboard.dashboard_assets.DashboardAlias import DashboardAlias
 from dashboard.dashboard_assets.DashboardApi import DashboardApi
 from dashboard.dashboard_assets.DashboardApplication import DashboardApplication
@@ -12,12 +13,14 @@ class ApiProject:
         self.apis: list[DashboardApi] = []
         self.apps: list[DashboardApplication] = []
         self.aliases: list[DashboardAlias] = []
+        self.policy_actions: list = []
     
     def add_asset(self, asset_type, asset_id, asset_name):
         dict = {
             "applications": self.add_app,
             "aliases": self.add_alias,
-            "apis": self.add_api
+            "apis": self.add_api,
+            #"policyActions": self.add_policy_action,
         }
         return dict[asset_type]((asset_id, asset_name))
     
@@ -30,11 +33,17 @@ class ApiProject:
     def get_api_ids(self) -> list[str]:
         return [api.id for api in self.apis]
     
+    def get_number_of_apis(self) -> int:
+        return len(self.apis)
+    
     def get_app_ids(self) -> list[str]:
         return [app.id for app in self.apps]
     
     def get_alias_ids(self) -> list[str]:
         return [alias.id for alias in self.aliases]
+    
+    def get_policy_actions_ids(self) -> list[str]:
+        return [policy_action.id for policy_action in self.policy_actions]
     
     def get_deployed_stages(self) -> list[str]:
         return list(self.stages.values())
@@ -76,11 +85,28 @@ class ApiProject:
         self.aliases.append(DashboardAlias(alias_tuple[1], alias_tuple[0]))
         return self.aliases
     
+    # def add_policy_action(self, policy_tuple: tuple) -> list[DashboardAlias]:
+    #     if policy_tuple[0] in self.get_policy_actions_ids():
+    #         return self.policy_actions
+    #     pattern = r'\[[A-Za-z0-9]+routing[A-Za-z0-9]+\]'
+    #     if re.match(pattern, policy_tuple[1].lower()):
+    #         self.policy_actions.append(DashboardAlias(policy_tuple[1], policy_tuple[0]))
+    #     return self.policy_actions
+    
     def get_api_by_id(self, api_id: str) -> DashboardApi:
         for api in self.apis:
             if api.id == api_id:
                 return api
         raise KeyError(f"Couldn't find API with ID {api_id}")
+    
+    def link_aliases_and_apis(self) -> None:
+        for api in self.apis:
+            alias_names = []
+            for alias in self.aliases:
+                alias_names.append(alias.name)
+                alias.add_linked_api(api.name)
+            api.add_linked_aliases(alias_names)
+        return
     
     def __repr__(self) -> str:
         # api_names = [api[1] for api in self.apis]

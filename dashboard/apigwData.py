@@ -12,7 +12,8 @@ from dashboard.dashboard_assets.DashboardStage import DashboardStage
 asset_type_mapping = {
     "API": "apis",
     "Application": "applications",
-    "Alias": "aliases"
+    "Alias": "aliases",
+    #"PolicyAction": "policyActions"
 }
 
 config_path = f"{Path().absolute()}/dashboard/configuration/dashboard_config.yaml"
@@ -118,7 +119,7 @@ class ApigwData:
         project_glob = list(asset_path.glob(f"demo-*"))
         # print(f"found projects: {project_glob}", file=sys.stdout)
         for project in project_glob:
-            project_name = str(project).rsplit("/", 1)[1]
+            project_name = project.name
             new_project = ApiProject(project_name)
             export_report = project / "assets/ExportReport.json"
             with export_report.open() as file:
@@ -130,6 +131,8 @@ class ApigwData:
                     asset_id = asset.get("assetObject").get("id")
                     asset_name = asset.get("assetObject").get("name")
                     new_project.add_asset(asset_type_mapping[asset_type], asset_id, asset_name)
+            if new_project.get_number_of_apis() == 1:
+                new_project.link_aliases_and_apis()
             projects_list.append(new_project)
         return projects_list
     
@@ -294,8 +297,10 @@ class ApigwData:
         api_version = "not found"
         deployed_stages = []
         apps_using_api_list = []
+        linked_aliases = []
         associated_project = "not found"
         associated_apps = "not found"
+        associated_aliases = "not found"
         
         for project in self.projects_list:
             project_stages = project.get_deployed_stages()
@@ -307,13 +312,16 @@ class ApigwData:
                     api_name = api.name
                     api_version = api.version
                     apps_using_api_list = api.get_apps()
+                    linked_aliases = api.get_linked_aliases()
                     print(f"API {api.name} with Apps {apps_using_api_list}", file=sys.stdout)
                     if len(apps_using_api_list) > 0:
                         associated_apps = ",".join(apps_using_api_list)
+                    if len(linked_aliases) > 0:
+                        associated_aliases = ",".join(linked_aliases)
                     continue
         deployed_stages = ",".join([stage.name for stage in deployed_stages]) if len(deployed_stages) > 0 else "not found" 
         # print(api_modal_structure, file=sys.stdout)
-        return [api_name_version, api_name, api_version, api_id, deployed_stages, associated_project, associated_apps]
+        return [api_name_version, api_name, api_version, api_id, deployed_stages, associated_project, associated_apps, associated_aliases]
     
     def get_app_info(self, app_id) -> list:
         app_name = "not found"
@@ -340,6 +348,7 @@ class ApigwData:
         alias_name = "not found"
         associated_project = "not found"
         associated_apis = "not found"
+        linked_apis = []
         deployed_stages = []
         
         for project in self.projects_list:
@@ -349,6 +358,9 @@ class ApigwData:
                     deployed_stages = [self.stages[i] for i in range(len(project_stages)) if project_stages[i]]
                     alias_name = alias.name
                     associated_project = project.name
+                    linked_apis = alias.get_linked_apis()
+                    if len(linked_apis) > 0:
+                        associated_apis = ",".join(linked_apis)
         
         deployed_stages = ",".join([stage.name for stage in deployed_stages]) if len(deployed_stages) > 0 else "not found" 
         return [alias_name, alias_id, deployed_stages, associated_project, associated_apis]

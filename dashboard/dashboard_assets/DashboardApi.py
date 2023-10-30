@@ -29,18 +29,18 @@ class DashboardApi():
         return
     
     def get_apps(self) -> list:
-        """Returns the list of app ids."""
+        """Returns the list of app names."""
         return self.__app_list    
     
-    def add_linked_aliases(self, alias_ids: list) -> list:
+    def add_linked_aliases(self, alias_names: list) -> None:
         """Add the given app ids. Returns the updated variable value."""
-        for alias_id in alias_ids:
-            if not alias_id in self.__alias_list:
-                self.__alias_list.append(alias_id)
-        return self.__alias_list
+        for alias_names in alias_names:
+            if not alias_names in self.__alias_list:
+                self.__alias_list.append(alias_names)
+        return
     
-    def get_alias_ids(self) -> list:
-        """Returns the list of app ids."""
+    def get_linked_aliases(self) -> list:
+        """Returns the list of alias ids."""
         return self.__alias_list
     
     def __repr__(self) -> str:

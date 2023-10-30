@@ -7,6 +7,8 @@ az aks start --name dashboard --resource-group apigw-dashboard
 az aks stop --name dashboard --resource-group apigw-dashboard
 
 az aks show --name dashboard --resource-group apigw-dashboard | ConvertFrom-Json | Select-Object powerState | ConvertTo-Json
+kubectl scale --replicas=0 deployment/dashboard -n aka-dashboard
+kubectl get pods -n aka-dashboard
 ```
 
 # use ADO to build and deploy image
