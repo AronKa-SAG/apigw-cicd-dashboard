@@ -267,11 +267,11 @@ class ApigwData:
         return updated_aliases_stage_tuples
     
     def get_projects_per_stage(self) -> list[tuple]:
-        # project_tuples = [ (projectname1, project1AssetString, true, false, true, false), (projectname2, project2AssetString, true, false, true, false), ...]
+        # project_tuples = [ (projectname1, true, false, true, false), (projectname2, true, false, true, false), ...]
         project_tuples = []
         for project in self.projects_list:
             project_stages_bool = list(project.stages.values())
-            project_tuples.append(tuple([project.name, project.get_assets_string()] + project_stages_bool))
+            project_tuples.append(tuple([project.name] + project_stages_bool))
         return project_tuples
     
     def refresh_all_stages(self) -> None:

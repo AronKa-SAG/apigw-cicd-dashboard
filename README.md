@@ -2,12 +2,24 @@
 Dashboard showing deployed assets for wM API Gateway. Based on Python and run via Docker.
 
 # start and stop aks cluster
+### if needed: manual login in azure
+```
+az login
+```
+### starting aks
+
 ```
 az aks start --name dashboard --resource-group apigw-dashboard
 az aks stop --name dashboard --resource-group apigw-dashboard
 
 az aks show --name dashboard --resource-group apigw-dashboard | ConvertFrom-Json | Select-Object powerState | ConvertTo-Json
 kubectl scale --replicas=0 deployment/dashboard -n aka-dashboard
+kubectl get pods -n aka-dashboard
+```
+
+### kubectl config to aks cluster
+```
+kubectl config use-context dashboard
 kubectl get pods -n aka-dashboard
 ```
 

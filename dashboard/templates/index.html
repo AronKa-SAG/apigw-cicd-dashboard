@@ -22,7 +22,7 @@
         <td>
           <a href="{{url_for('project_modal', project_name=project_tuple[0])}}" data-toggle="modal" data-target="#modalResult">{{ project_tuple[0] }}</a>
         </td>
-        {% for item in project_tuple[2:] %}
+        {% for item in project_tuple[1:] %}
         <td>
           {% if not item and (loop.index + 1 < project_tuple|length) and project_tuple[loop.index + 1] %}
             <span class="badge badge-danger">Not Deployed</span>
