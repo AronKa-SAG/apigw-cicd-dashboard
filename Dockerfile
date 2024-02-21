@@ -1,4 +1,4 @@
-FROM python:3.10-alpine
+FROM python:3.10-alpine as mybase
 
 # Fixed part
 WORKDIR /opt/dashboard-app
@@ -10,6 +10,7 @@ RUN set -e; \
 		linux-headers \
 		git ;
 
+FROM mybase as finished
 # Frequently changing part
 COPY . /opt/dashboard-app
 RUN pip install --no-cache-dir -r requirements.txt

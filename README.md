@@ -37,9 +37,13 @@ push tag to repo
 delete tag locally
 > git tag --delete 1.0
 
-# run repo
+# build locally
 ```
 docker build -t dashboard:0.9 .
+kubectl config use-context rancher-desktop
+kubectl delete -f dashboard_deployment_modified.yaml
+kubectl apply -f dashboard_deployment_modified.yaml
+
 docker run -d -p 8080:8080 dashboard:0.9
 ```
 

@@ -376,7 +376,7 @@ class ApigwData:
                 project_stages = project.get_deployed_stages()
                 deployed_stages = [self.stages[i] for i in range(len(project_stages)) if project_stages[i]]
                 associated_apis = [api.name_version for api in project.apis]
-                associated_apps = [app.name for app in project.apps]
+                associated_apps = sorted([app.name for app in project.apps], key=lambda x:self.SORT_ORDER[x.rsplit('_', 1)[1]])
                 associated_aliases = [alias.name for alias in project.aliases]
         deployed_stages_string = ",".join([stage.name for stage in deployed_stages]) if len(deployed_stages) > 0 else "not found" 
         associated_apis_string = ",\n".join([api_name for api_name in associated_apis]) if len(associated_apis) > 0 else "not found" 
